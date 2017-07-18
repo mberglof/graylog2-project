@@ -1,0 +1,17 @@
+---
+# dependencies:
+#   - { role: elasticsearch, es_start_service: false, es_version: "{{ fh_es_version }}", es_instance_name: "{{ fh_es_node_name }}", es_http_port: "{{ fh_es_http_port }}", es_heap_size: "{{ fh_es_heap_size }}", es_api_port: "{{ fh_es_api_port }}",
+#     es_config: {
+#       node.name: "{{ fh_es_node_name}}",
+#       cluster.name: "{{ fh_es_cluster_name}}",
+#       discovery.zen.ping.unicast.hosts: "{{ fh_es_discovery_zen_ping_unicast_hosts }}",
+#       http.port: "{{ fh_es_http_port }}",
+#       network.bind_host: "{{ fh_es_network_bind_host }}",
+#       network.publish_host: "{{ fh_es_network_publish_host }}",
+#       node.data: true,
+#       node.master: true,
+#       bootstrap.memory_lock: true,
+#       discovery.zen.minimum_master_nodes: 2
+#       }
+#     }
+#   when: install_elasticsearch

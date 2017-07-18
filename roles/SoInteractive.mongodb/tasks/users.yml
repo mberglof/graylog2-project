@@ -1,0 +1,21 @@
+---
+- name: Ensure admin exists
+  mongodb_user:
+    database: admin
+    name: "{{ mongodb_admin_user }}"
+    password: "{{ mongodb_admin_password }}"
+    roles: userAdmin,clusterAdmin,userAdminAnyDatabase
+    state: present
+  ignore_errors: true
+
+- name: Create users
+  mongodb_user:
+    database: "{{ item.value.db }}"
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    name: "{{ item.value.name }}"
+    password: "{{ item.value.pass }}"
+    roles: "{{ item.value.roles | default('readWrite') }}"
+    state: present
+  with_dict: "{{ mongodb_users }}"
+  when: mongodb_create_users

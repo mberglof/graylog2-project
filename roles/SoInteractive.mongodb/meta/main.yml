@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Pawel Krupa, Roman Demachkovych (mongodb-exporter)
+  description: Provision one- or multi-node mongodb cluster
+  company: Sointeractive
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+  - name: EL
+    versions:
+    - 7
+  galaxy_tags:
+  - database
+  - mongo
+  - nosql
+
+dependencies: []

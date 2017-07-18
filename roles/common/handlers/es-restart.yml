@@ -1,0 +1,108 @@
+---
+###
+# Elasticsearch Rolling restart using Ansible
+###
+
+##
+## Why is this needed?
+##
+#
+# Even if you use a serial setting to limit the number of nodes processed at one
+# time, Ansible will restart elasticsearch nodes and continue processing as soon as
+# the elasticsearch service restart reports itself complete.  This pushes the cluster 
+# into a red state due to muliple data nodes being restarted at once, and can cause
+# performance problems.
+#
+##
+## Solution:
+##
+#
+# Perform a rolling restart of the elasticsearch nodes and wait for the cluster
+# to stabilize before continuing processing nodes.
+#
+## 
+## NOTES
+##
+#
+# Our elasticsearch role and these handlers assume Ansible is running on one
+# of the Elasticsearch cluster nodes (see the use of "localhost:9200" below)
+#
+# Variable definitions
+#
+# service - Our cluster uses three types of nodes:
+#   'search' - Provides the front end Elasticsearch api to our applications
+#   'ossec'  - Runs on our ossec masters to for input of ossec-hids logs and alerts
+#   'data'   - Holds the cluster data
+#
+# 'search' and 'ossec' nodes are eligible to be masters.
+#
+# The elasticsearch role is called with the service variable set appropriately.
+#
+# Each node in our cluster is 'node.name'd {{ansible_hostname}}-{{service}} in its
+# elasticsearch.yml configuration file.
+#
+# The handlers are chained together using notify to perform the following process:
+#
+# 1. Disable shard allocation on the cluster
+# 2. Restart the elasticsearch node process
+# 3. Wait for the node to rejoin the cluster
+# 4. Enable shard allocation on the cluster
+# 5. Wait for the cluster state to become green
+#
+# This keeps the cluster from entering a red state.
+
+# Restart Elasticsearch node
+# This handler is the entrance point for the chained set of handers
+- name: restart elasticsearch-{{service}}
+  debug: msg="Rolling restart of node {{ansible_hostname}}-{{service}} initiated"
+  changed_when: true
+  notify:
+  - cluster routing none {{ansible_hostname}}-{{service}}
+
+# Turn off shard allocation
+- name: cluster routing none {{ansible_hostname}}-{{service}}
+  local_action: "shell curl -XPUT localhost:9200/_cluster/settings -d '{\"transient\" : {\"cluster.routing.allocation.enable\" : \"none\" }}'"
+  register: result
+  until: result.stdout.find('"acknowledged"') != -1
+  retries: 200
+  delay: 3
+  changed_when: result.stdout.find('"acknowledged":true') != -1
+  notify:
+  - do restart {{ansible_hostname}}-{{service}}
+
+# restart elasticsearch process
+- name: do restart {{ansible_hostname}}-{{service}}
+  service: name=elasticsearch-{{service}} state=restarted
+  notify:
+  - wait node {{ansible_hostname}}-{{service}}
+
+# Wait for Elasticsearch node to come back into cluster
+- name: wait node {{ansible_hostname}}-{{service}}
+  local_action: "shell curl -s -m 2 'localhost:9200/_cat/nodes?h=name' | tr -d ' ' | grep -E '^{{ansible_hostname}}-{{service}}$' "
+  register: result
+  until: result.rc == 0
+  retries: 200
+  delay: 3
+  notify:
+  - cluster routing all {{ansible_hostname}}-{{service}}
+
+# Turn on shard allocation
+- name: cluster routing all {{ansible_hostname}}-{{service}}
+  local_action: "shell curl -s -m 2 -XPUT localhost:9200/_cluster/settings -d '{\"transient\" : {\"cluster.routing.allocation.enable\" : \"all\" }}'"
+  register: result
+  until: result.stdout.find("acknowledged") != -1
+  retries: 200
+  delay: 3
+  changed_when: result.stdout.find('"acknowledged":true') != -1
+  notify:
+  - wait green {{ansible_hostname}}-{{service}}
+  tags:
+  - service
+
+# Wait until cluster status is green
+- name: wait green {{ansible_hostname}}-{{service}}
+  local_action: shell curl -s -m 2 localhost:9200/_cat/health | cut -d ' ' -f 4
+  register: result
+  until: result.stdout.find("green") != -1
+  retries: 200
+  delay: 3

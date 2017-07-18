@@ -1,0 +1,22 @@
+---
+- roles:
+  - { role: elasticsearch, es_instance_name: "{{ fh_es_node_name }}", "{{ fh_es_http_port }}",
+    es_config: {
+      node.name: "{{ fh_es_node_name}}",
+      cluster.name: "{{ fh_es_cluster_name}}",
+      discovery.zen.ping.unicast.hosts: "{{ fh_es_discovery_zen_ping_unicast_hosts }}",
+      http.port: "{{ fh_es_http_port }}",
+      node.data: true,
+      node.master: true,
+      bootstrap.memory_lock: true,
+      }
+    }
+  vars:
+    es_scripts: false
+    es_templates: false
+    es_version_lock: false
+    es_heap_size: "{{ fh_es_heap_size }}"
+    es_api_port: "{{ fh_es_api_port }}"
+  tags:
+    - provision
+# vim: set ft=ansible sts=2
