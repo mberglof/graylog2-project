@@ -1,0 +1,10 @@
+---
+# used in group_vars/mongodb/main.yml & group_vars/graylog2-servers/main.yml
+fh_graylog_mongodb_user: graylog
+fh_graylog_mongodb_password: password
+fh_graylog_mongodb_db: graylog
+
+fh_mongodb_admin_user: admin
+fh_mongodb_admin_password: password
+
+# vim: ft=ansible sts=2

@@ -1,0 +1,24 @@
+---
+# - name: 'mongodb.cluster'
+#   src: 'https://github.com/twoyao/ansible-mongodb-cluster.git'
+#   version: 'master'
+#
+# - name: 'lesmyrmidons.mongodb'
+#   src: 'https://github.com/lesmyrmidons/ansible-role-mongodb.git'
+#   version: 'master'
+#
+- name: 'elastic.elasticsearch'
+  src: 'https://github.com/elastic/ansible-elasticsearch.git'
+  version: 'master'
+
+- name: 'jdauphant.nginx'
+  src: 'https://github.com/jdauphant/ansible-role-nginx.git'
+  version: 'v2.8.1'
+
+- name: 'SoInteractive.mongodb'
+  version: '0.1.4'
+
+- name: 'jdauphant.nginx'
+  src: 'https://github.com/jdauphant/ansible-role-nginx.git'
+  version: 'v2.7.4'
+
