@@ -1,0 +1,33 @@
+---
+- hosts: all
+  tasks:
+  - name: "Group by OS"
+    group_by: key=os_{{ ansible_os_family }}
+
+- hosts: mongodb
+  become: yes
+  tags: always
+  tasks:
+  - name: debug settings all
+    debug: msg="mongodb admin user {{ fh_mongodb_admin_user }}"
+    when: fh_mongodb_admin_user is defined
+
+  - name: debug group_vars mongodb
+    debug: msg="mongodb admin user {{ mongodb_admin_user }}"
+    when: mongodb_admin_user is defined
+
+  - name: debug group_vars common_pip_packages
+    debug: msg="pip packages {{ common_pip_packages }}"
+    when: common_pip_packages is defined
+
+  - name: debug defaults fh_mongodb_admin_user
+    debug: msg="fh_mongodb_admin_user {{ fh_mongodb_admin_user }}"
+    when: fh_mongodb_admin_user is defined
+
+    #- include: common.yml
+
+- hosts: mongodb
+  become: yes
+  roles:
+    - role: common
+    # - role: SoInteractive.mongodb
