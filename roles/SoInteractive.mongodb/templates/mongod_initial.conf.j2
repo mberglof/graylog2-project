@@ -5,6 +5,9 @@ systemLog:
   path: {{ mongodb_log_dir }}/mongodb.log
   logAppend: true
 
+processManagement:
+  pidFilePath: {{ mongodb_pidfilepath | default('/var/run/mongodb/mongod.pid') }}
+
 storage:
   dbPath: {{ mongodb_database_dir }}
   journal:

@@ -10,7 +10,8 @@ storage:
   journal:
     enabled: true
 
-#processManagement:
+processManagement:
+  pidFilePath: {{ mongodb_pidfilepath | default('/var/run/mongodb/mongod.pid') }}
 #  fork: true
 
 net:
