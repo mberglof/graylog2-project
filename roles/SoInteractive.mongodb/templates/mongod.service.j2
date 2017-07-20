@@ -1,0 +1,34 @@
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User={{ mongodb_system_user }}
+Group={{ mongodb_system_group }}
+Environment="OPTIONS=-f /etc/mongod.conf"
+ExecStart=/usr/bin/mongod $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown {{ mongodb_system_user }}:{{ mongodb_system_group}} /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 {{ mongodb_database_dir }}
+PermissionsStartOnly=true
+PIDFile={{ mongodb_pidfilepath | default('/var/run/mongodb/mongod.pid') }}
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# total threads (user+kernel)
+# require kernel >= 4
+#TasksAccounting=true
+#TasksMax=infinity
+# Recommended limits for for mongod as specified in
+# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+
+[Install]
+WantedBy=multi-user.target
