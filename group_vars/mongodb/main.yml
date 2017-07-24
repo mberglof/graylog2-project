@@ -2,26 +2,29 @@
 mongodb_hosts_group: mongodb
 
 mongodb_version: 3.2
-#mongodb_full_version: 3.2.2
+mongodb_full_version: 3.2.2
 
-mongodb_metrics: true
+mongodb_metrics: False
+mongodb_dependencies: ""
 
 mongodb_log_dir: /var/log/mongodb
-mongodb_database_dir: /var/lib/mongodb
-mongodb_system_user: mongodb
-mongodb_system_group: mongodb
+mongodb_database_dir: /var/lib/mongo
+mongodb_system_user: mongod
+mongodb_system_group: mongod
+mongdb_pidfilepath: /var/run/mongodb/mongod.pid
 
 mongodb_admin_user: "{{ fh_mongodb_admin_user | default('admin')}}"
 mongodb_admin_password: "{{ fh_mongodb_admin_password | default('password')}}"
 
-mongodb_interface: "{{ ansible_default_ipv4.interface }}"
+mongodb_interface: "enp0s8"
+# mongodb_interface: "{{ ansible_default_ipv4.interface }}"
 mongodb_address: "{{ hostvars[inventory_hostname]['ansible_' + mongodb_interface]['ipv4']['address'] }}"
 mongodb_port: 27017
 
-mongodb_replica_name:
+mongodb_replica_name: rs0
 mongodb_replica_arbiter:
 mongodb_replica_primary_node: "{{ groups[mongodb_hosts_group][0]['ansible_' + mongodb_interface]['ipv4']['address'] }}"
-mongodb_replica_secondary_nodes: []
+mongodb_replica_secondary_nodes: "{{ groups[mongodb_hosts_group][1:]['ansible_' + mongodb_interface]['ipv4']['address'] | list }}"
 
 # PLAIN
 # MONGODB-CR
@@ -63,3 +66,9 @@ mongodb_exporter_config_flags:
   'mongodb.uri': 'mongodb://{{ mongodb_address }}:{{ mongodb_port }}'
   'web.metrics-path': '{{ mongodb_exporter_web_metrics }}'
   'log_dir': '{{ mongodb_exporter_log_dir }}'
+
+## misc
+common_pip_packages:
+  pymongo:
+    name: pymongo
+    version: "{{ mongodb_full_version }}"

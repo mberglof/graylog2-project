@@ -1,0 +1,49 @@
+# graylog_elasticsearch_discovery_zen_ping_unicast_hosts: '127.0.0.1:9300'
+graylog_mongodb_uri:                                    'mongodb://mongodb1:27017,mongodb2:27017,mongod3:27017/graylog'
+graylog_mongodb_max_connections:                        100
+graylog_mongodb_threads_allowed_to_block_multiplier:    5
+
+# graylog_es_debian_pin_version:     '5.*'
+
+graylog_version: 2.3
+graylog_install_elasticsearch: False
+graylog_install_mongodb:       False
+graylog_install_nginx:         True
+graylog_install_java:          True
+
+# General
+graylog_is_master:            'True'
+graylog_node_id_file:         '/etc/graylog/server/node-id'
+graylog_password_secret:      '2jueVqZpwLLjaWxV'
+graylog_root_username:        'admin'
+graylog_root_password_sha2:   '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
+graylog_plugin_dir:           '/usr/share/graylog-server/plugin'
+graylog_root_email:           ''
+graylog_root_timezone:        'UTC'
+graylog_alert_check_interval: 60
+graylog_disable_sigar:        'False'
+
+nginx_sites:
+  graylog:
+    - listen 80
+    - server_name graylog2-server
+    - location / {
+      proxy_pass http://localhost:9000/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_pass_request_headers on;
+      proxy_connect_timeout 150;
+      proxy_send_timeout 100;
+      proxy_read_timeout 100;
+      proxy_buffers 4 32k;
+      client_max_body_size 8m;
+      client_body_buffer_size 128k; }
+
+trusted_proxies: "10.0.0.0/8, 192.168.33.0/24"
+
+# ES
+graylog_elasticsearch_hosts: "http://elastsearch1:9200,http://elasticsearch2:9200,http://elasticsearch3:9200"
+graylog_elasticsearch_discovery_enabled: 'True'
+
+# vim: et sts=2 ft=ansible
