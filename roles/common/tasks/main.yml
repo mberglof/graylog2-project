@@ -1,3 +1,14 @@
+- name: Gather variables for each operating system
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags:
+    - always
+
 - name: Install EPEL
   yum:
     name: "{{ item }}"
@@ -29,10 +40,18 @@
     - libselinux-python
     - htop
     - vim
+    - python-pip
   run_once: true
   register: package_result
   tags:
     - provision
+
+- name: Install pip packages
+  pip:
+    name: "{{ item.key }}"
+    version: "{{ item.value.version }}"
+  with_dict: "{{ common_pip_packages }}"
+  when: common_pip_packages is defined
 
 - name: debug package_result
   debug: msg="{{ package_result }}"
