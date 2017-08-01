@@ -1,0 +1,15 @@
+---
+- hosts: all
+  tasks:
+  - name: "Group by OS"
+    group_by: key=os_{{ ansible_os_family }}
+
+- hosts: elasticsearch
+  tasks:
+
+  - name: "Debug es_config"
+    debug: msg="{{ es_config }}"
+
+  roles:
+    - role: elastic.elasticsearch
+
