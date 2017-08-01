@@ -22,3 +22,9 @@
   src: 'https://github.com/jdauphant/ansible-role-nginx.git'
   version: 'v2.7.4'
 
+- name: 'Graylog2.graylog-ansible-role'
+  src: 'https://github.com:mberglof/graylog-ansible-role.git'
+  version: 'v2.3.1-dev'
+
+- name: 'geerlingguy.java'
+
