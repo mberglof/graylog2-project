@@ -1,12 +1,11 @@
 ---
-- hosts: all
+- hosts: graylog2
   tasks:
   - name: "Group by OS"
     group_by: key=os_{{ ansible_os_family }}
 
 - hosts: graylog2
   tasks:
-
   roles:
     - role: geerlingguy.java
       when:
