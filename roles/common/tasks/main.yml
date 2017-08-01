@@ -52,18 +52,26 @@
     version: "{{ item.value.version }}"
   with_dict: "{{ common_pip_packages }}"
   when: common_pip_packages is defined
+  tags:
+    - debug
 
 - name: debug package_result
   debug: msg="{{ package_result }}"
   when: package_result is defined
+  tags:
+    - debug
 
 - name: debug fh_es_heap_size
   debug: msg="{{ fh_es_heap_size }}"
-  when: fh_es_heap_size is defined
+  when: fh_es_heap_size is defined and fh_es_instance_name == inventory_hostname
+  tags:
+    - debug
 
 - name: debug fh_es_instance_name
   debug: msg="{{ fh_es_instance_name }}"
-  when: fh_es_instance_name is defined
+  when: fh_es_instance_name is defined and fh_es_instance_name == inventory_hostname
+  tags:
+    - debug
 
 
 # vim: set filetype=ansible sts=2
