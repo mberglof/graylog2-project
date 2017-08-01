@@ -12,6 +12,10 @@
     debug: msg="mongodb admin user {{ fh_mongodb_admin_user }}"
     when: fh_mongodb_admin_user is defined
 
+  - name: debug fh_graylog_mongodb_user
+    debug: msg="graylog mongodb user {{ fh_graylog_mongodb_user }}"
+    when: fh_graylog_mongodb_user  is defined
+
   - name: debug group_vars mongodb
     debug: msg="mongodb admin user {{ mongodb_admin_user }}"
     when: mongodb_admin_user is defined
@@ -24,10 +28,21 @@
     debug: msg="fh_mongodb_admin_user {{ fh_mongodb_admin_user }}"
     when: fh_mongodb_admin_user is defined
 
-    #- include: common.yml
+- hosts: all
+  become: yes
+  roles:
+    - role: common
 
 - hosts: mongodb
   become: yes
   roles:
-    - role: common
-    # - role: SoInteractive.mongodb
+    - role: SoInteractive.mongodb
+  tags:
+    - provision
+
+- hosts: elasticsearch
+  become: yes
+  roles:
+    - role: elastic.elasticsearch
+
+- include: graylog2.yml
