@@ -16,12 +16,11 @@ mongdb_pidfilepath: /var/run/mongodb/mongod.pid
 mongodb_admin_user: "{{ fh_mongodb_admin_user | default('admin')}}"
 mongodb_admin_password: "{{ fh_mongodb_admin_password | default('password')}}"
 
-mongodb_interface: "enp0s8"
-# mongodb_interface: "{{ ansible_default_ipv4.interface }}"
+mongodb_interface: "{{ fh_mongodb_interface | default(ansible_default_ipv4.interface) }}"
 mongodb_address: "{{ hostvars[inventory_hostname]['ansible_' + mongodb_interface]['ipv4']['address'] }}"
-mongodb_port: 27017
+mongodb_port: "{{ fh_mongodb_port | default('27017') }}"
 
-mongodb_replica_name: rs0
+mongodb_replica_name: "{{ fh_mongodb_replica_name | default('rs0')}}"
 mongodb_replica_arbiter:
 mongodb_replica_primary_node: "{{ groups[mongodb_hosts_group][0]['ansible_' + mongodb_interface]['ipv4']['address'] }}"
 mongodb_replica_secondary_nodes: "{{ groups[mongodb_hosts_group][1:]['ansible_' + mongodb_interface]['ipv4']['address'] | list }}"
