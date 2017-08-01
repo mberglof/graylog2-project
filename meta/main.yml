@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role: 'geerlingguy.java'
+    when:
+      - "ansible_os_family == 'RedHat'"
+      - "graylog_install_java == True"
+    java_packages:
+      - java-1.8.0-openjdk
