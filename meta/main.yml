@@ -1,5 +1,11 @@
 ---
 dependencies:
+  - role: 'SoInteractive.mongodb'
+    when:
+      - "'mongodb' in {{ group_names }} and graylog_install_mongodb == False"
+  - role: 'lesmyrmidons.mongodb'
+    when:
+      - "graylog_install_mongodb == True"
   - role: 'geerlingguy.java'
     when:
       - "ansible_os_family == 'RedHat'"
