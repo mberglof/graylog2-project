@@ -7,4 +7,17 @@ fh_graylog_mongodb_db: graylog
 fh_mongodb_admin_user: admin123
 fh_mongodb_admin_password: password
 
+# vagrant second interface
+fh_mongodb_interface: "enp0s8"
+
+# SoInteractive.mongodb
+fh_mongodb_port: 27017
+
+# mongodb.cluster
+fh_mongoc_port: 7777
+fh_mongos_port: 27017
+
+fh_es_servers: "{{ groups['elasticsearch'] | map('extract', hostvars, 'ansible_nodename') | list }}"
+fh_mongodb_servers: "{{ groups[mongodb_hosts_group] | map('extract', hostvars, 'ansible_nodename') | list }}"
+
 # vim: ft=ansible sts=2

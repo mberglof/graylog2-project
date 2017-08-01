@@ -1,4 +1,5 @@
 # graylog_elasticsearch_discovery_zen_ping_unicast_hosts: '127.0.0.1:9300'
+# list: "{{ groups['elasticsearch'] | map('extract', hostvars, 'ansible_nodename') | list }}"
 graylog_mongodb_uri:                                    'mongodb://mongodb1:27017,mongodb2:27017,mongod3:27017/graylog'
 graylog_mongodb_max_connections:                        100
 graylog_mongodb_threads_allowed_to_block_multiplier:    5
@@ -43,6 +44,7 @@ nginx_sites:
 trusted_proxies: "10.0.0.0/8, 192.168.33.0/24"
 
 # ES
+# list: "{{ groups['elasticsearch'] | map('extract', hostvars, 'ansible_nodename') | list }}"
 graylog_elasticsearch_hosts: "http://elastsearch1:9200,http://elasticsearch2:9200,http://elasticsearch3:9200"
 graylog_elasticsearch_discovery_enabled: 'True'
 
