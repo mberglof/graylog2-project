@@ -1,0 +1,17 @@
+---
+- hosts: all
+  tasks:
+  - name: "Group by OS"
+    group_by: key=os_{{ ansible_os_family }}
+
+- hosts: graylog2
+  tasks:
+
+  roles:
+    - role: geerlingguy.java
+      when:
+        - "ansible_os_family == 'RedHat'"
+        - "graylog_install_java == True"
+      java_packages:
+        - java-1.8.0-openjdk
+    - role: Graylog2.graylog-ansible-role
