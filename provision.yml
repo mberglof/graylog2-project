@@ -28,10 +28,7 @@
     debug: msg="fh_mongodb_admin_user {{ fh_mongodb_admin_user }}"
     when: fh_mongodb_admin_user is defined
 
-- hosts: all
-  become: yes
-  roles:
-    - role: common
+- include: common.yml
 
 - hosts: mongodb
   become: yes
