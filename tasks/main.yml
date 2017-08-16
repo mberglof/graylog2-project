@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+  tags: always
+  tasks:
+  - name: debug settings all from main
+    debug: msg="mongodb admin user {{ fh_mongodb_admin_user }}"
+    when: fh_mongodb_admin_user is defined
+
+  - name: debug group_vars mongodb from main
+    debug: msg="mongodb admin user {{ mongodb_admin_user }}"
+    when: mongodb_admin_user is defined
+
+  - name: debug group_vars mongodb from main
+    debug: msg="mongodb_users {{ mongodb_users }}"
+    when: mongodb_users is defined
