@@ -23,4 +23,13 @@
   notify:
     - restart mongodb
 
+- name: Create initial configuration
+  template:
+    src: mongod_initial.conf.j2
+    dest: /etc/mongod.conf
+  tags:
+    - template
+  notify:
+    - restart mongodb
+
 - meta: flush_handlers

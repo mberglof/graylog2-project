@@ -7,15 +7,47 @@
 - meta: flush_handlers
 
 - name: Wait a little bit more
-  pause:
-    prompt: "Wait for mongo"
-    seconds: 10
+  wait_for:
+    port: 27017
+    delay: 3
+    state: started
+
+- name: Check which one is the master
+  command: "mongo {{ mongodb_replica_name }} --quiet --eval 'db.isMaster()'"
+  register: current_master
+  changed_when: True
+  ignore_errors: True
+  tags:
+    - debug
+
+- name: debug current_master
+  debug: msg="{{ current_master.stdout_lines | type_debug}}"
+  #debug: msg="{{ current_master.stdout_lines | from_json }}"
+  tags:
+    - debug
+
+- name: Set fact master
+  # set_fact: current_master_node = ({{ current_master | from_json }}).
+  debug: msg="master node is {{ current_master.stdout_lines | to_nice_json('indent=2') | map(attribute='primary') }}"
+  tags:
+    - debug
+
+- name: "Display all"
+  debug: var=item
+  with_items: "{{current_master.stdout |json_query('*')}}"
+  tags:
+    - debug
 
 - name: Check if replica is configured
   command: "mongo {{ mongodb_replica_name }} --eval 'rs.conf();'"
   register: replica_conf
   ignore_errors: True
   tags: skip_ansible_lint
+
+- name: debug replica_conf
+  debug: msg="{{ replica_conf }}"
+  when: replica_conf is defined
+  tags: always
 
 - block:
   - name: Start replica set
@@ -24,6 +56,7 @@
   - name: Get arbiter address
     set_fact:
       arbiter_address: "{{ hostvars[mongodb_replica_arbiter]['ansible_' + mongodb_interface]['ipv4']['address'] }}"
+    when: mongodb_replica_arbiter != None
 
   - name: Add arbiter node
     command: "mongo {{ mongodb_replica_name }} --eval 'rs.addArb(\"{{ arbiter_address }}\");'"
@@ -41,4 +74,9 @@
     pause:
       seconds: 5
 
-  when: "'no replset config has been received' in replica_conf.stdout"
+  when: replica_conf.stdout == 'penis'
+  # when: "'no replset config has been received' in replica_conf.stdout"
+
+  always:
+  - name: debug replica_conf
+    debug: msg="{{ replica_conf }}"

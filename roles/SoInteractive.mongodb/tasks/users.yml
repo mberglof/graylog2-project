@@ -19,3 +19,4 @@
     state: present
   with_dict: "{{ mongodb_users }}"
   when: mongodb_create_users
+  ignore_errors: true

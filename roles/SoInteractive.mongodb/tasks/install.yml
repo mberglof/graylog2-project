@@ -1,10 +1,4 @@
 ---
-- name: Install dependencies
-  package:
-    name: "{{ item }}"
-    state: installed
-  with_items: "{{ mongodb_dependencies }}"
-
 - name: Add mongodb repository key
   apt_key:
     keyserver: hkp://keyserver.ubuntu.com:80
@@ -32,6 +26,12 @@
     name: "{{ item }}"
     state: installed
   with_items: "{{ mongodb_packages }}"
+
+- name: Install systemd unit file
+  template: src=mongod.service.j2 dest=/usr/lib/systemd/system/mongod.service
+  notify: reload systemd
+
+- meta: flush_handlers
 
 - name: Enable mongo service
   service:

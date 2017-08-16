@@ -1,6 +1,5 @@
 ---
-mongodb_dependencies:
-  - python-pymongo
+mongodb_dependencies: []
 
 #mongodb_packages:
 #  - "mongodb-org={{ mongodb_full_version }}"
@@ -15,3 +14,5 @@ mongodb_packages:
   - "mongodb-org-shell"
   - "mongodb-org-mongos"
   - "mongodb-org-tools"
+
+mongodb_pidfilepath: "/var/run/mongodb/mongod.pid"
